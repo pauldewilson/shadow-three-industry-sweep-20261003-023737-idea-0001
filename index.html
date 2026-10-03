@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<!--
+  WentAround — shadow-launch coming-soon page (LOCAL ENGINEERING COPY, fully inert).
+  Built from the ui-ux spec: agent_docs/research/three-industry-sweep__20261003-023737/ui-ux/idea-0001__20261003-0700.md
+  Copy source (71 strings, verbatim): marketing-copy/idea-0001__20261003-0650.md (§Findings)
+  Two-state contract: this local page has no JS behavior. signup-config.js is a
+  comment-only stub (window.__SHADOW_SIGNUP_CONFIG__ stays undefined) and signup.js
+  stays dormant — no requests, no storage, no success state. See README.md.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>WentAround — Go-around alerts the moment they happen</title>
+  <meta name="description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q4 2026.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="rail">
+      <p class="wordmark">WentAround</p>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <section class="hero rail-block">
+      <div class="hero-copy">
+        <p class="hero-badge">Launching Q4 2026</p>
+        <h1 id="hero-title" class="hero-headline">Catch the <span class="go-nowrap">go-around.</span> <span class="hero-line2">The moment it happens.</span></h1>
+        <p class="hero-hook">You watch the map for hours hoping to catch one — WentAround watches every covered airport around the clock and tips you off when an airliner goes around, with a link straight to the aircraft.</p>
+        <div class="cta-row">
+          <a class="btn btn-outline" href="#signup">Notify me at launch <span class="glyph" aria-hidden="true">↓</span></a>
+          <a class="link-quiet" href="#airports">See which airports</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="map-panel" aria-hidden="true">
+          <svg viewBox="0 0 640 440" role="presentation" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
+            <polyline points="600,80 520,140 440,200 360,260 300,310 260,350 240,380" fill="none" stroke="#5E7089" stroke-width="2"/>
+            <polyline points="360,260 330,215 305,160 290,110" fill="none" stroke="#FFB020" stroke-width="2.5"/>
+            <polygon points="360,260 344,252 348,268" fill="#FFB020"/>
+            <rect x="180" y="392" width="280" height="4" fill="#3A4C66"/>
+            <rect x="180" y="404" width="280" height="4" fill="#3A4C66"/>
+            <rect x="180" y="384" width="4" height="28" fill="#3A4C66"/>
+            <rect x="456" y="384" width="4" height="28" fill="#3A4C66"/>
+          </svg>
+        </div>
+        <div class="alert-card">
+          <div class="tg-bubble">
+            <p class="tg-row1">
+              <span class="tg-event">GO-AROUND</span>
+              <span class="tg-sep" aria-hidden="true">·</span>
+              <span class="tg-meta">LAX · 21:47 local</span>
+              <span class="sample-tag">SAMPLE</span>
+            </p>
+            <p class="tg-row2">Halcyon Air A320 — on final approach, climbed away, flying another approach.</p>
+            <p class="tg-row3">
+              <span class="mock-link">ADS-B Exchange <span aria-hidden="true">↗</span></span>
+              <span class="mock-link">FlightRadar24 <span aria-hidden="true">↗</span></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how rail-block">
+      <h2 class="section-kicker">How it works</h2>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-num" aria-hidden="true">01</span>
+          <h3 class="step-title">We watch. You don't have to.</h3>
+          <p class="step-body">WentAround monitors live ADS-B data at every covered airport, around the clock.</p>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">02</span>
+          <h3 class="step-title">The moment an airliner climbs away, you know.</h3>
+          <p class="step-body">When an airliner on final approach climbs away instead of landing, you get an alert — airline, aircraft type, airport and time, straight to Telegram or Discord. Free channels run about 15 minutes behind live; Instant alerts arrive the moment it happens.</p>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">03</span>
+          <h3 class="step-title">Watch it live.</h3>
+          <p class="step-body">Every alert carries direct links to the aircraft on ADS-B Exchange and FlightRadar24 — with Instant, you're opening the tracker while it's still climbing out.</p>
+        </li>
+      </ol>
+      <div class="mock-embed">
+        <p class="embed-header">SAMPLE ALERT · FRA</p>
+        <div class="embed-grid">
+          <div class="embed-field"><span class="embed-label">AIRLINE</span><span class="embed-value">Cardinal Air</span></div>
+          <div class="embed-field"><span class="embed-label">TYPE</span><span class="embed-value">B738</span></div>
+          <div class="embed-field"><span class="embed-label">AIRPORT</span><span class="embed-value">FRA</span></div>
+          <div class="embed-field"><span class="embed-label">TIME</span><span class="embed-value">19:03 local</span></div>
+        </div>
+        <p class="tg-row3">
+          <span class="mock-link">ADS-B Exchange <span aria-hidden="true">↗</span></span>
+          <span class="mock-link">FlightRadar24 <span aria-hidden="true">↗</span></span>
+        </p>
+      </div>
+    </section>
+
+    <section class="features rail-block">
+      <h2 class="section-kicker">Built for spotters</h2>
+      <ul class="feature-grid">
+        <li class="feature-card">
+          <h3 class="card-title">Instant alerts</h3>
+          <p class="card-body">The moment an airliner goes around, your Instant alert lands — not hours later, when the clip finally shows up online.</p>
+        </li>
+        <li class="feature-card">
+          <h3 class="card-title">Free public channels</h3>
+          <p class="card-body">Every covered airport gets a free public Telegram channel and a Discord feed, with a short delay.</p>
+        </li>
+        <li class="feature-card">
+          <h3 class="card-title">Watch-live links</h3>
+          <p class="card-body">One tap on any alert opens the aircraft's page on ADS-B Exchange or FlightRadar24.</p>
+        </li>
+        <li class="feature-card">
+          <h3 class="card-title">Your airports, your filters</h3>
+          <p class="card-body">Follow up to 10 airports at once and filter by airline and aircraft type, so you only hear about the traffic you actually care about.</p>
+          <span class="plan-chip">Instant plan.</span>
+        </li>
+        <li class="feature-card feature-card--wide">
+          <h3 class="card-title">Curated for airliners</h3>
+          <p class="card-body">Alerts cover airliner-class aircraft at major spotting hubs — the traffic you're there for.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section class="airports" id="airports" tabindex="-1">
+      <div class="rail">
+        <h2 class="section-kicker">Airports at launch</h2>
+        <p class="airports-intro">We're starting with five of the world's great spotting airports — each with its own free channel:</p>
+        <ul class="airport-chips">
+          <li class="airport-chip">Los Angeles <span class="chip-code">(LAX)</span></li>
+          <li class="airport-chip">New York <span class="chip-code">(JFK)</span></li>
+          <li class="airport-chip">London Heathrow <span class="chip-code">(LHR)</span></li>
+          <li class="airport-chip">Frankfurt <span class="chip-code">(FRA)</span></li>
+          <li class="airport-chip">Amsterdam <span class="chip-code">(AMS)</span></li>
+        </ul>
+        <p class="airports-note">More airports follow as the service grows.</p>
+      </div>
+    </section>
+
+    <section class="plans rail-block">
+      <h2 class="section-kicker">Plans at launch</h2>
+      <div class="plan-grid">
+        <article class="plan-card plan-card--free">
+          <h3 class="plan-name">Free</h3>
+          <p class="price"><span class="price-num">$0</span></p>
+          <p class="plan-line">Go-around alerts for every covered airport, with a short delay.</p>
+          <ul class="plan-list">
+            <li>Public Telegram channel + Discord feed per airport</li>
+            <li>Watch-live links in every alert</li>
+          </ul>
+        </article>
+        <article class="plan-card plan-card--instant">
+          <h3 class="plan-name">Instant</h3>
+          <p class="price"><span class="price-num">$4.99</span> <span class="price-per">/ month</span></p>
+          <p class="price-alt">or <span class="price-num price-num--alt">$39.99</span> <span class="price-per">/ year</span></p>
+          <p class="plan-line">Alerts the moment it happens.</p>
+          <ul class="plan-list">
+            <li>Private alerts, no delay</li>
+            <li>Up to 10 airports at once</li>
+            <li>Airline and aircraft-type filters</li>
+            <li>Watch-live links in every alert</li>
+          </ul>
+        </article>
+      </div>
+      <p class="fine-print">Pick Instant when we launch — leave your details below and we'll email you everything you need to join.</p>
+    </section>
+
+    <section class="signup-band" id="signup" tabindex="-1">
+      <div class="rail">
+        <h2 class="signup-title">Be on the channels from day one.</h2>
+        <p class="signup-sub">Launching Q4 2026. Leave your details below and we'll email you the moment the first channels go live.</p>
+        <form class="signup-form" data-signup>
+          <div class="field">
+            <label for="email">Your email</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+          <fieldset class="intent-group">
+            <legend>One quick question: would you pay $4.99/month for instant go-around alerts at these airports?</legend>
+            <label class="radio-row">
+              <input type="radio" name="paid_intent" value="yes_instant">
+              <span class="radio-visual" aria-hidden="true"></span>
+              <span class="radio-label">Yes — instant is worth it to me</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="paid_intent" value="one_time">
+              <span class="radio-visual" aria-hidden="true"></span>
+              <span class="radio-label">Only as a cheaper one-time purchase</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="paid_intent" value="no_free_ok">
+              <span class="radio-visual" aria-hidden="true"></span>
+              <span class="radio-label">No — the free channels are fine for me</span>
+            </label>
+          </fieldset>
+          <button type="button" class="btn btn-amber">Notify me at launch</button>
+          <p class="signup-status" role="status"></p>
+          <p class="consent">We'll email you when we launch. We store your email, the page you signed up on and basic technical metadata (time, IP address, browser) for this launch notification only — no marketing lists, no sharing.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="faq rail-block">
+      <h2 class="section-kicker">Questions, answered</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3 class="faq-q">What's a go-around?</h3>
+          <p class="faq-a">An airliner on final approach climbs away instead of landing and flies another approach — a routine safety procedure when a runway isn't clear or an approach isn't stable. Spotters call it a go-around or a missed approach. They're unplanned, they're dramatic, and they're uncommon enough that catching one live is special.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Which airports will be covered?</h3>
+          <p class="faq-a">We're launching with Los Angeles (LAX), New York (JFK), London Heathrow (LHR), Frankfurt (FRA) and Amsterdam (AMS). Each airport gets its own free public channel, and more airports follow as the service grows.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">How do alerts arrive?</h3>
+          <p class="faq-a">Free: public Telegram channels and Discord feeds, with a short delay. Instant: private alerts delivered the moment it happens. Every alert — free or Instant — shows the airline, aircraft type, airport and time, with direct links to the aircraft on ADS-B Exchange and FlightRadar24.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">What's the difference between Free and Instant?</h3>
+          <p class="faq-a">Free channels post the go-arounds we detect at each covered airport with a short delay. Instant is $4.99/month or $39.99/year: alerts the moment it happens, up to 10 airports at once, and airline and aircraft-type filters.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Do I need an app?</h3>
+          <p class="faq-a">No. Alerts arrive in Telegram or Discord — join the free channels or connect your account for Instant alerts and you're set.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">Are you affiliated with ADS-B Exchange or FlightRadar24?</h3>
+          <p class="faq-a">No — we're an independent service. Alerts link to the aircraft's pages on ADS-B Exchange and FlightRadar24 so you can pull them up and watch; we're not affiliated with or endorsed by either.</p>
+        </div>
+        <div class="faq-item">
+          <h3 class="faq-q">When do you launch?</h3>
+          <p class="faq-a">Q4 2026. Leave your details above and we'll email you when the first channels go live.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="rail">
+      <p class="footer-line">WentAround · Launching Q4 2026 · Go-around alerts for the spotting community. FlightRadar24 and ADS-B Exchange are products of their respective owners; WentAround is independent and not affiliated with either.</p>
+    </div>
+  </footer>
+
+  <script src="signup-config.js" defer></script>
+  <script src="signup.js" defer></script>
+</body>
+</html>

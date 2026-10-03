@@ -1,0 +1,803 @@
+/* ============================================================
+   WentAround — shadow-launch page styles (local, fully inert)
+   Implementing agent_docs/research/three-industry-sweep__20261003-023737/
+   ui-ux/idea-0001__20261003-0700.md (§4–§9) 1:1.
+   Page revision r2 (2026-10-03): visual-QA's one consolidated revise round —
+   P1/P2/P3 applied (inline "visual-QA revise round 1" comments); copy untouched.
+   Dark "night-shift instrument panel" direction: 17 tokens + 2 focus
+   tokens, one amber accent (D1 budget: five locations), system fonts only,
+   no external assets, no motion beyond guarded ≤150ms color transitions.
+   ============================================================ */
+
+/* ---------- §7.1 Tokens ---------- */
+:root {
+  color-scheme: dark;
+
+  --bg-0: #0E1520;        /* page ground, footer ground */
+  --bg-1: #151E2C;        /* cards, alert-card shell, chips, sample tag, radio visual bg, skip link */
+  --bg-2: #0A111B;        /* inset wells: email input, fieldset, map panel, tg-bubble, embed, chips */
+  --band: #182233;        /* signup band full-bleed ground */
+  --band-soft: #111A28;   /* airports strip full-bleed ground */
+
+  --line-1: #26344A;      /* decorative hairlines */
+  --line-2: #3A4C66;      /* decorative keylines: map-panel runway glyphs only */
+  --line-ui: #5E7089;     /* interactive-component boundaries (D5) */
+
+  --ink-hi: #E9EFF7;      /* headings, wordmark, input text, values, price numbers, success text */
+  --ink-body: #C9D4E2;    /* body copy, badges, chips, radio labels */
+  --ink-mute: #93A6BC;    /* kickers, numerals, captions, consent, footer, meta */
+  /* --ink-faint (#647A93) is decorative-only (D4) and intentionally unused on this page. */
+
+  --alert: #FFB020;       /* D1 budget — five locations only (see below) */
+  --alert-hover: #FFC14D; /* S8 hover fill only */
+  --alert-ink: #1F1408;   /* text on the amber fill */
+
+  --link: #8FC5F2;        /* CTA text, text links, mockup links, radio selected dot */
+  --error: #FFA3A3;       /* live-variant error text only (ruling d) */
+
+  --focus-outer: #E9EFF7; /* outer focus ring — the conformance carrier */
+  --focus-inner: #10161F; /* inner focus ring (functional against the amber fill) */
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* ---------- Reset / base ---------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--ink-body);
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, p, fieldset, legend { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+@media (min-width: 1024px) {
+  body { font-size: 1.06rem; }
+}
+
+/* ---------- §8 Focus ---------- */
+:focus-visible {
+  outline: 2px solid var(--focus-outer);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--focus-inner);
+}
+
+/* tabindex="-1" anchor waypoints, not controls — no ring drawn (spec §2) */
+.airports:focus,
+.signup-band:focus { outline: none; }
+
+/* ---------- Geometry: rail ---------- */
+.rail,
+.rail-block {
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 32px);
+}
+
+.rail-block { padding-block: clamp(64px, 9vw, 104px); }
+
+/* ---------- §4.2 Skip link ---------- */
+.skip-link {
+  position: absolute;
+  top: -60px; /* fully off-canvas (element is ~52px tall incl. borders); snaps to top:0 on focus */
+  left: 16px;
+  z-index: 10;
+  background: var(--bg-1);
+  color: var(--ink-hi);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border: 2px solid var(--line-ui);
+  border-radius: 0 0 10px 10px;
+  padding: 12px 20px;
+}
+
+.skip-link:focus-visible { top: 0; }
+
+/* ---------- §4.1 Header ---------- */
+.site-header { padding-block: 16px; }
+
+.wordmark {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--ink-hi);
+}
+
+/* ---------- Section kickers (h2 semantics, mono voice) ---------- */
+.section-kicker {
+  margin: 0 0 32px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+/* ---------- §4.3 Hero ---------- */
+.hero { padding-top: clamp(48px, 7vw, 80px); }
+
+.hero-badge {
+  display: inline-block;
+  background: var(--bg-2);
+  border: 2px solid var(--line-ui);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--ink-body);
+}
+
+.hero-headline {
+  margin-top: 24px;
+  font-size: clamp(2.5rem, 6.5vw, 3.4rem);
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--ink-hi);
+}
+
+/* P1 (visual-QA revise round 1): the compound noun "go-around." must never
+   split at its hyphen (sentence period stays inside the atomic unit).
+   Presentational span only — characters stay verbatim. */
+.go-nowrap {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-hook {
+  margin-top: 16px;
+  max-width: 56ch;
+  color: var(--ink-body);
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-top: 32px;
+}
+
+/* ---------- §6 Buttons (shared: H4 outline CTA + S8 amber) ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--line-ui);
+  color: var(--link);
+}
+
+.btn-outline:hover { border-color: var(--link); }
+
+.link-quiet {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 4px;
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.glyph { font-size: 1.05em; }
+
+/* At 320px: H4 full-width, H5 wraps beneath (§9) */
+.cta-row .btn-outline { flex: 1 1 100%; }
+
+/* ---------- Hero visual (§5.3 map panel + §5.1 alert card) ---------- */
+.hero-visual { margin-top: 40px; }
+
+.map-panel {
+  border: 1px solid var(--line-1);
+  border-radius: 16px;
+  background-color: var(--bg-2);
+  background-image:
+    repeating-linear-gradient(0deg, var(--line-1) 0 1px, transparent 1px 48px),
+    repeating-linear-gradient(90deg, var(--line-1) 0 1px, transparent 1px 48px);
+  aspect-ratio: 16 / 11;
+  /* min-height is scoped to ≥720px: on narrow screens a clamped block-size
+     makes aspect-ratio DERIVE the width (280px × 16/11 = 407px) and overflow
+     the viewport (measured). At ≥720px the natural ratio height (≥468px)
+     always exceeds 280px, so the floor is inert there. */
+  overflow: hidden;
+}
+
+.map-panel svg { display: block; width: 100%; height: 100%; }
+
+/* Alert card — mobile: static, full width */
+.alert-card {
+  width: 100%;
+  margin-top: 16px;
+  background: var(--bg-1);
+  border: 2px solid var(--line-ui);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.tg-bubble {
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.tg-row1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.tg-event {
+  color: var(--alert); /* D1 location 2: hero GO-AROUND token */
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.tg-sep,
+.tg-meta { color: var(--ink-mute); }
+
+.sample-tag {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  background: var(--bg-1);
+  border: 1px solid var(--line-1);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.tg-row2 {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-body);
+}
+
+.tg-row3 { margin: 0; }
+
+/* Inert spans styled as links — never focusable, never a link role */
+.mock-link {
+  color: var(--link);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-right: 12px;
+  cursor: default;
+}
+
+/* ---------- §5.2 Discord-style embed (HOW-IT-WORKS) ---------- */
+.mock-embed {
+  max-width: 640px;
+  margin: 40px auto 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  border-left: 3px solid var(--alert); /* D1 location 3: mockup-alert bar */
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.embed-header {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  color: var(--ink-mute);
+}
+
+.embed-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 0 0 12px;
+}
+
+.embed-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.embed-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.embed-value {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--ink-hi);
+}
+
+/* ---------- §4.5 Features (plain typographic cards, no icons) ---------- */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.feature-card {
+  background: var(--bg-1);
+  border: 1px solid var(--line-1); /* decorative — cards are non-interactive */
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.card-title {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  line-height: 1.35;
+  font-weight: 650;
+  color: var(--ink-hi);
+}
+
+.card-body {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+
+.plan-chip {
+  display: inline-block;
+  margin-top: 12px;
+  background: var(--bg-2);
+  border: 2px solid var(--line-ui);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--ink-body);
+}
+
+/* ---------- §4.6 Airports strip (full-bleed, gentle zone) ---------- */
+.airports {
+  background: var(--band-soft);
+  padding-block: clamp(56px, 8vw, 88px);
+  scroll-margin-top: 24px;
+}
+
+.airports-intro {
+  max-width: 60ch;
+  color: var(--ink-body);
+}
+
+.airport-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.airport-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* sized for rhythm; non-interactive */
+  background: var(--bg-1);
+  border: 1px solid var(--line-1);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: var(--ink-body);
+}
+
+.chip-code {
+  font-family: var(--font-mono);
+  color: var(--ink-hi);
+}
+
+.airports-note { color: var(--ink-mute); }
+
+/* ---------- §4.7 Pricing ---------- */
+.plan-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+.plan-card {
+  background: var(--bg-1);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.plan-card--free { border: 1px solid var(--line-1); }
+
+.plan-card--instant { border: 2px solid var(--line-ui); } /* neutral elevation, no amber (D1) */
+
+.plan-name {
+  display: inline-block;
+  background: var(--bg-2);
+  border: 2px solid var(--line-ui);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  font-weight: 650;
+  color: var(--ink-body);
+}
+
+.price { margin-top: 16px; }
+
+.price-num {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-hi);
+}
+
+.price-num--alt { font-size: 1.15rem; }
+
+.price-per {
+  font-size: 0.9rem;
+  color: var(--ink-mute);
+}
+
+.price-alt { margin-top: 4px; }
+
+.plan-line {
+  margin: 12px 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+
+.plan-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--ink-body);
+}
+
+.plan-list li::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  margin-top: 0.45em;
+  background: var(--line-ui); /* decorative square marker */
+}
+
+.fine-print {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+/* ---------- §4.8 Signup band (primary focal point) ---------- */
+.signup-band {
+  background: var(--band);
+  border-top: 2px solid var(--alert); /* D1 location 4: band keyline */
+  padding-block: clamp(72px, 10vw, 112px);
+  scroll-margin-top: 24px;
+}
+
+.signup-title {
+  text-align: center;
+  font-size: clamp(1.6rem, 3.4vw, 2.1rem);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink-hi);
+}
+
+.signup-sub {
+  margin: 16px auto 40px;
+  max-width: 60ch;
+  text-align: center;
+  color: var(--ink-body);
+}
+
+.signup-form {
+  max-width: 640px;
+  margin-inline: auto;
+  text-align: left;
+}
+
+/* ---------- §6 Form fields ---------- */
+.field { margin: 0 0 4px; }
+
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--ink-hi);
+}
+
+.field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  background: var(--bg-2);
+  color: var(--ink-hi);
+  border: 2px solid var(--line-ui);
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: border-color 150ms ease;
+}
+
+.field input:hover { border-color: var(--link); } /* enhancement only */
+
+.intent-group {
+  border: 2px solid var(--line-ui);
+  border-radius: 12px;
+  background: var(--bg-2);
+  padding: 12px; /* top raised 8→12px to seat the in-flow legend (P3) */
+  margin: 24px 0;
+  min-inline-size: 0; /* let the long legend wrap — no overflow at 320px */
+}
+
+.intent-group legend {
+  /* P3 (visual-QA revise round 1): the UA renders a fieldset legend as a
+     patch straddling the top border, swallowing it (flex/grid on the
+     fieldset does NOT un-straddle it in Chromium — measured). float:left +
+     width:100% is the cross-engine un-straddle: the legend renders as an
+     in-flow first row inside the group and the border stays intact. The
+     .radio-row flex containers self-clear below the float (measured).
+     Fieldset/legend semantics and all strings unchanged. */
+  float: left;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  line-height: 1.4;
+  font-weight: 650;
+  color: var(--ink-hi);
+  background: var(--bg-2);
+  padding: 2px 8px;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 4px;
+  cursor: pointer;
+  position: relative;
+  color: var(--ink-body);
+}
+
+.radio-row input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.radio-visual {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--line-ui);
+  border-radius: 50%;
+  background: var(--bg-2);
+}
+
+/* Selected = filled dot (shape change, never color alone) */
+.radio-row input:checked + .radio-visual {
+  border-color: var(--link);
+  background: radial-gradient(circle at center, var(--link) 0 5px, transparent 6px);
+}
+
+/* Focus ring moves to the sibling visual */
+.radio-row input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.radio-row input:focus-visible + .radio-visual {
+  outline: 2px solid var(--focus-outer);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--focus-inner);
+}
+
+/* S8 — the page's only filled amber button (D1 location 5).
+   P2 (visual-QA revise round 1): full-width on mobile (art direction §8);
+   desktop floor lives in the ≥720px block below. */
+.btn-amber {
+  width: 100%;
+  min-height: 52px;
+  background: var(--alert);
+  border: 2px solid var(--alert);
+  color: var(--alert-ink);
+  font-weight: 650;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.btn-amber:hover {
+  background: var(--alert-hover);
+  border-color: var(--alert-hover);
+}
+
+/* Status region — present from load, zero-footprint while empty.
+   Never display:none, never min-height (2026-10-01 hardening). */
+.signup-status { margin: 0; }
+
+/* Live-variant states (signup.js writes text + class; never rendered locally) */
+.signup-status.is-success {
+  color: var(--ink-hi);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.signup-status.is-error {
+  color: var(--error);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.consent {
+  margin: 12px auto 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-mute);
+  max-width: 56ch;
+  text-align: center;
+}
+
+/* ---------- §4.9 FAQ (static, long by design) ---------- */
+.faq-list { max-width: 760px; }
+
+.faq-item { padding-block: 20px; }
+
+.faq-item + .faq-item { border-top: 1px solid var(--line-1); }
+
+.faq-q {
+  margin: 0 0 8px;
+  font-size: 1.12rem;
+  line-height: 1.4;
+  font-weight: 650;
+  color: var(--ink-hi);
+}
+
+.faq-a {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--ink-body);
+}
+
+/* ---------- §4.10 Footer ---------- */
+.site-footer {
+  border-top: 1px solid var(--line-1);
+  padding-block: 32px;
+}
+
+.footer-line {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--ink-mute);
+}
+
+/* ---------- §9 Responsive contract (base 320–719 → 720 → 1024) ---------- */
+@media (min-width: 480px) {
+  .embed-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+  }
+
+  /* spec §5.3 fallback floor — inert here (natural height ≥ 468px at this width) */
+  .map-panel { min-height: 280px; }
+}
+
+@media (min-width: 720px) {
+  .feature-card { padding: 24px; }
+
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+
+  .feature-card--wide { grid-column: 1 / -1; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+
+  .plan-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .cta-row .btn-outline { flex: 0 0 auto; }
+
+  /* P2 (visual-QA revise round 1): S8 meets the art direction §8 desktop
+     minimum of 280px; measured 198px content-sized before the fix. */
+  .btn-amber { width: auto; min-width: 280px; }
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 48px;
+    align-items: center;
+    padding-bottom: calc(clamp(64px, 9vw, 104px) + 48px); /* headroom for card overhang */
+  }
+
+  .hero-visual {
+    position: relative;
+    margin-top: 0;
+  }
+
+  .alert-card {
+    position: absolute;
+    left: 24px;
+    bottom: -32px;
+    width: min(420px, 88%);
+    margin-top: 0;
+  }
+}
+
+/* Steps grid on mobile: stacked, same gap */
+@media (max-width: 719.98px) {
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+/* ---------- Motion guard ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
