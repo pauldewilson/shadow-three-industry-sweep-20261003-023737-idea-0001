@@ -39,6 +39,19 @@
  *   400            -> verification/captcha wording
  *   captcha/network failure -> its own retry wording
  *   anything else  -> generic failure text
+ *
+ * Success-lock (2026-10-01 certified pattern, ported 2026-10-03 for
+ * deployed-site parity — signup.js r5): while a submission is in flight the
+ * form carries aria-busy="true" and its submit buttons are disabled (a
+ * disabled control natively stops dispatching clicks, so the delegated
+ * handlers go silent — the inFlight guard stays the authoritative
+ * single-flight gate). On HTTP 200 the entire form is locked: every input
+ * and button inside <form data-signup> gets the disabled attribute —
+ * never removed or hidden, and disabled changes no box geometry, so the
+ * layout never shifts. On every failure path (422/429/400/other, captcha
+ * or network failure) the buttons re-enable for retry and aria-busy
+ * clears; inputs are never disabled on failure.
+ *
  * The reCAPTCHA Enterprise loader is injected lazily and ONLY when the
  * config sets captchaRequired (first submit, never on page load). No
  * cookies, no page storage; the session id is held in memory for the page
@@ -100,6 +113,36 @@
     if (region) {
       region.textContent = "";
       region.classList.remove("is-success", "is-error");
+    }
+  }
+
+  /* In-flight + success-lock state (2026-10-01 certified pattern, ported
+     2026-10-03, signup.js r5). While a submission is in flight the form is
+     marked aria-busy and its submit buttons are disabled; on HTTP 200 the
+     whole form is locked — every input and button gets the disabled
+     attribute. Controls are never removed or hidden: `disabled` changes no
+     box geometry, so the layout never shifts. On every failure path the
+     buttons re-enable for retry and aria-busy clears; inputs are never
+     disabled on failure. */
+  function lockFormFields(form) {
+    Array.prototype.forEach.call(form.querySelectorAll("input, button"), function (el) {
+      el.disabled = true;
+    });
+  }
+
+  function setFormBusy(form, busy, succeeded) {
+    var buttons = form.querySelectorAll("button, input[type=\"button\"], input[type=\"submit\"]");
+    if (busy) {
+      form.setAttribute("aria-busy", "true");
+      Array.prototype.forEach.call(buttons, function (b) { b.disabled = true; });
+    } else {
+      form.removeAttribute("aria-busy");
+      if (succeeded) {
+        lockFormFields(form);
+      } else {
+        /* Failure keeps the form enabled for retry (honest error shown). */
+        Array.prototype.forEach.call(buttons, function (b) { b.disabled = false; });
+      }
     }
   }
 
@@ -412,6 +455,10 @@
     }
 
     var request = function () {
+      /* Settled true only on HTTP 200 (immediately with the success message);
+         it drives the settle step below — lock on success, re-enable on
+         failure. */
+      var succeeded = false;
       fetch(cfg.backendUrl.replace(/\/+$/, "") + "/api/v1/signups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -429,6 +476,7 @@
           var body = result && result.body;
           if (result && result.ok && status === 200) {
             writeStatus(form, MSG_SUCCESS, "is-success", false);
+            succeeded = true;
             return;
           }
           if (status === 422) {
@@ -456,6 +504,10 @@
           }
         })
         .then(function () {
+          /* Settle (always runs, like finally): HTTP 200 locks the form —
+             disabled, never hidden; any failure re-enables the buttons for
+             retry and clears aria-busy. */
+          setFormBusy(form, false, succeeded);
           inFlight = false;
         });
     };
@@ -465,6 +517,7 @@
         /* malformed live config: no token can ever be obtained — honest
            verification wording, no loader request, no POST */
         writeStatus(form, MSG_VERIFICATION, "is-error", true);
+        setFormBusy(form, false, false);
         inFlight = false;
         return;
       }
@@ -477,10 +530,12 @@
           })
           .catch(function () {
             writeStatus(form, MSG_VERIFICATION, "is-error", true);
+            setFormBusy(form, false, false);
             inFlight = false;
           });
       }, function () {
         writeStatus(form, MSG_UNREACHABLE, "is-error", true);
+        setFormBusy(form, false, false);
         inFlight = false;
       });
     } else {
@@ -511,6 +566,10 @@
 
     clearStatus(form);
     inFlight = true;
+    /* In-flight state (2026-10-01 certified pattern): aria-busy on the form
+       + submit buttons disabled (clicks on disabled controls stop
+       dispatching; inFlight stays the single-flight gate). */
+    setFormBusy(form, true, false);
     submitPayload(form, cfg, collectFormData(form));
   }
 
