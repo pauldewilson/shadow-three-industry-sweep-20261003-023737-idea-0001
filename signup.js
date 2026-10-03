@@ -283,8 +283,65 @@
   /* reCAPTCHA Enterprise loader — injected only when the config requires it. */
   var recaptchaState = "idle"; /* idle | loading | ready | failed */
 
+  /* Captcha readiness is NOT "grecaptcha.enterprise exists": Google attaches
+     enterprise.execute later via a progressively loaded submodule, so a mere
+     existence check raced the first submit ("grecaptcha.enterprise.execute
+     is not a function", live 2026-10-03). Ready means execute is callable. */
+  function recaptchaExecuteReady() {
+    return !!(window.grecaptcha && window.grecaptcha.enterprise &&
+      typeof window.grecaptcha.enterprise.execute === "function");
+  }
+
+  /* Wait for execute-readiness (150ms/40-tries poll, the pattern already used
+     below): prefer the API's own ready() callback when present (finer-grained
+     readiness signal), with the poll ALWAYS running as the guaranteed
+     fallback/backstop — a one-shot guard lets whichever fires first win, so
+     done()/failed() can never double-fire and the wait can never outlive the
+     poll's timeout. If ready() fires before execute has attached, it is
+     ignored and the poll keeps waiting. */
+  function awaitRecaptchaExecute(done, failed, tries) {
+    var settled = false;
+    var timer = null;
+    var win = function () {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      if (timer) {
+        clearInterval(timer);
+      }
+      done();
+    };
+    var lose = function () {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      if (timer) {
+        clearInterval(timer);
+      }
+      failed();
+    };
+    var enterprise = window.grecaptcha && window.grecaptcha.enterprise;
+    if (enterprise && typeof enterprise.ready === "function") {
+      enterprise.ready(function () {
+        if (recaptchaExecuteReady()) {
+          win();
+        }
+      });
+    }
+    timer = setInterval(function () {
+      tries += 1;
+      if (recaptchaExecuteReady()) {
+        win();
+      } else if (tries > 40) {
+        lose();
+      }
+    }, 150);
+  }
+
   function ensureRecaptcha(cfg, done, failed) {
-    if (window.grecaptcha && window.grecaptcha.enterprise) {
+    if (recaptchaExecuteReady()) {
       recaptchaState = "ready";
       done();
       return;
@@ -298,7 +355,7 @@
       var tries = 0;
       var timer = setInterval(function () {
         tries += 1;
-        if (window.grecaptcha && window.grecaptcha.enterprise) {
+        if (recaptchaExecuteReady()) {
           clearInterval(timer);
           recaptchaState = "ready";
           done();
@@ -316,12 +373,20 @@
       + encodeURIComponent(cfg.siteKey);
     script.async = true;
     script.onload = function () {
-      recaptchaState = (window.grecaptcha && window.grecaptcha.enterprise) ? "ready" : "failed";
-      if (recaptchaState === "ready") {
+      if (recaptchaExecuteReady()) {
+        recaptchaState = "ready";
         done();
-      } else {
-        failed();
+        return;
       }
+      /* script.onload is NOT execute-ready: the progressive submodule can
+         still be attaching enterprise.execute — wait for it before done(). */
+      awaitRecaptchaExecute(function () {
+        recaptchaState = "ready";
+        done();
+      }, function () {
+        recaptchaState = "failed";
+        failed();
+      }, 0);
     };
     script.onerror = function () {
       recaptchaState = "failed";
