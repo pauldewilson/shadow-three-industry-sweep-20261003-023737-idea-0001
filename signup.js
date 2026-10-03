@@ -8,34 +8,61 @@
  * this file did not exist.
  *
  * LIVE-SIGNUP VARIANTS ONLY (shadow-launches--deployed/ + publish repo):
- * when a real signup-config.js defines
- *   window.__SHADOW_SIGNUP_CONFIG__ = { endpoint, source?, recaptchaSiteKey? }
- * this handler binds to <form data-signup>, POSTs email/source/session/
- * consent plus every raw form field as form_data (email optional — stored
- * when present), and renders the backend's verdict in the form's
- * [role="status"] element (2026-10-01 hardening: silently no-ops if the
- * form has no status region).
+ * when a real signup-config.js defines the canonical config keys
+ *   window.__SHADOW_SIGNUP_CONFIG__ = { backendUrl, siteKey, source,
+ *                                       consentVersion, captchaRequired }
+ * this handler binds to <form data-signup> and POSTs exactly the frozen
+ * backend contract (docs/backend-architecture.md §12 payload, §7 schema —
+ * SignupCreate with extra:"forbid"):
+ *   email (OPTIONAL — top-level key omitted entirely when the field is
+ *          empty; stored when present), source, source_url, session_id,
+ *          consent_version, captcha_token (only when the config requires
+ *          captcha), plus every raw form field as form_data.
+ * No top-level `session` and no boolean `consent` field is ever sent —
+ * those are not backend-schema fields and would 422 (extra-forbid). No
+ * `analytics` object is sent either: this page carries no tracking config,
+ * so it posts the plain §12 field set (legacy-client shape; source_url is
+ * the page the visitor signed up on, origin + path only).
+ * The backend's verdict renders in the form's [role="status"] element
+ * (2026-10-01 hardening: silently no-ops if the form has no status region).
  *
  * Response mapping (2026-09-26 user direction — the frontend renders the
  * backend's verdict, it is not the validator):
- *   200            -> success text
+ *   200            -> success text. Every accepted attempt is its own row
+ *                     (§6 fact table, duplicates included): repeated
+ *                     submissions re-POST and store additional rows.
  *   422 validation -> a specific "Please check the form" message that names
- *                     the fix (never the generic failure text)
+ *                     the fix (never the generic failure text). Handles the
+ *                     per-field detail array AND a string detail (the
+ *                     extra-forbid rejection shape) AND an unparsable body.
  *   429            -> rate-limit wording
  *   400            -> verification/captcha wording
  *   captcha/network failure -> its own retry wording
  *   anything else  -> generic failure text
  * The reCAPTCHA Enterprise loader is injected lazily and ONLY when the
- * config carries a site key (first submit, never on page load). No cookies,
- * no page storage; the session id is held in memory for the page view only.
+ * config sets captchaRequired (first submit, never on page load). No
+ * cookies, no page storage; the session id is held in memory for the page
+ * view only (one id per page load, ≤64 chars — server schema limit).
  */
 (function () {
   "use strict";
 
-  var liveConfig = window.__SHADOW_SIGNUP_CONFIG__;
+  /* Config gate — canonical keys per docs/backend-architecture.md §12:
+     backendUrl, siteKey, source, consentVersion, captchaRequired. Re-read
+     at every submit attempt, so a missing/invalid config can never act. */
+  function readConfig() {
+    var cfg = window.__SHADOW_SIGNUP_CONFIG__;
+    if (!cfg || typeof cfg !== "object") {
+      return null;
+    }
+    if (typeof cfg.backendUrl !== "string" || !cfg.backendUrl) {
+      return null;
+    }
+    return cfg;
+  }
 
   /* DORMANT GATE — no live config: bind nothing at all. */
-  if (!liveConfig || !liveConfig.endpoint) {
+  if (!readConfig()) {
     return;
   }
 
@@ -76,31 +103,130 @@
     }
   }
 
-  /* Collect every named field on the form; radio/checkbox only when checked. */
-  function readFields(form) {
-    var controls = form.querySelectorAll("input, select, textarea");
+  /* Collect every named form control into form_data — the server stores it
+     as-received (§6/§12). File inputs and buttons are skipped; a single
+     checkbox -> boolean; checkboxes sharing a name -> array of checked
+     values; radios -> the checked value, omitted when none is checked;
+     multi-select -> array of selected values; text-like values are
+     trimmed. Unknown fields/structure land here as-received (§7). */
+  function collectFormData(form) {
+    var groups = {};
+    var elements = form.elements;
+    for (var i = 0; i < elements.length; i++) {
+      var el = elements[i];
+      var tag = el.tagName;
+      var type = (el.type || "").toLowerCase();
+      if (tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA") {
+        continue;
+      }
+      if (!el.name || el.disabled) {
+        continue;
+      }
+      if (type === "file" || type === "submit" || type === "button" ||
+          type === "reset" || type === "image") {
+        continue;
+      }
+      if (!groups[el.name]) {
+        groups[el.name] = [];
+      }
+      groups[el.name].push(el);
+    }
+
     var data = {};
-    for (var i = 0; i < controls.length; i++) {
-      var control = controls[i];
-      if (!control.name || control.disabled) {
+    for (var name in groups) {
+      if (!Object.prototype.hasOwnProperty.call(groups, name)) {
         continue;
       }
-      if ((control.type === "radio" || control.type === "checkbox") && !control.checked) {
-        continue;
+      var els = groups[name];
+      var first = els[0];
+      var firstType = (first.type || "").toLowerCase();
+
+      if (firstType === "radio") {
+        for (var j = 0; j < els.length; j++) {
+          if (els[j].checked) {
+            data[name] = els[j].value;
+            break;
+          }
+        }
+      } else if (firstType === "checkbox") {
+        if (els.length === 1) {
+          data[name] = first.checked; /* boolean */
+        } else {
+          var checked = [];
+          for (var k = 0; k < els.length; k++) {
+            if (els[k].checked) {
+              checked.push(els[k].value);
+            }
+          }
+          data[name] = checked;
+        }
+      } else if (first.tagName === "SELECT" && first.multiple) {
+        var selected = [];
+        for (var m = 0; m < first.options.length; m++) {
+          if (first.options[m].selected) {
+            selected.push(first.options[m].value);
+          }
+        }
+        data[name] = selected;
+      } else {
+        data[name] = first.value.trim();
       }
-      data[control.name] = control.value;
     }
     return data;
   }
 
-  /* Ephemeral page-view id, held in memory only (no persistence of any kind). */
-  function makeSessionId() {
-    var hex = "0123456789abcdef";
-    var out = "";
-    for (var i = 0; i < 32; i++) {
-      out += hex.charAt(Math.floor(Math.random() * 16));
+  /* email is OPTIONAL (§7/§12): the top-level key is included only when a
+     non-empty value exists. Prefer the first input[type=email]; else the
+     first collected field whose name mentions "email" and holds a string
+     value (booleans and arrays from checkboxes never become the email). */
+  function extractEmail(form, formData) {
+    var input = form.querySelector("input[type=\"email\"]");
+    var value = input && typeof input.value === "string" ? input.value : "";
+    if (!value) {
+      for (var key in formData) {
+        if (Object.prototype.hasOwnProperty.call(formData, key) &&
+            /email/i.test(key) && typeof formData[key] === "string") {
+          value = formData[key];
+          break;
+        }
+      }
     }
-    return out;
+    value = (value || "").trim();
+    return value || null;
+  }
+
+  /* session_id — one per page load (server schema limit: 64 chars), held in
+     memory only. Ephemeral page-view id; no persistence of any kind. */
+  var sessionId = null;
+
+  function ensureSessionId() {
+    if (sessionId) {
+      return sessionId;
+    }
+    var crypto = window.crypto;
+    if (crypto && typeof crypto.randomUUID === "function") {
+      sessionId = crypto.randomUUID();
+    } else if (crypto && typeof crypto.getRandomValues === "function") {
+      var bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      sessionId = Array.prototype.map.call(bytes, function (b) {
+        return ("0" + b.toString(16)).slice(-2);
+      }).join("");
+    } else {
+      sessionId = "s-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+    }
+    return sessionId;
+  }
+
+  /* source_url — the page the visitor signed up on, origin + path only
+     (query string and fragment stripped client-side; §7 "page URL captured
+     by the frontend", matching the consent microcopy's disclosure). */
+  function pageUrl() {
+    try {
+      return window.location.origin + window.location.pathname;
+    } catch (err) {
+      return "";
+    }
   }
 
   /* Turn the backend's 422 per-field detail into a specific, plain-language fix. */
@@ -138,6 +264,8 @@
         }
       }
     } else if (typeof detail === "string" && detail.trim()) {
+      /* extra-forbid and similar rejections can arrive as a plain string
+         detail — still a specific, non-generic "Please check the form" fix */
       var text = detail.trim().replace(/\.$/, "");
       if (/email/i.test(text)) {
         emailFix();
@@ -185,7 +313,7 @@
     recaptchaState = "loading";
     var script = document.createElement("script");
     script.src = "https://www.google.com/recaptcha/enterprise.js?render="
-      + encodeURIComponent(cfg.recaptchaSiteKey);
+      + encodeURIComponent(cfg.siteKey);
     script.async = true;
     script.onload = function () {
       recaptchaState = (window.grecaptcha && window.grecaptcha.enterprise) ? "ready" : "failed";
@@ -202,17 +330,24 @@
     document.head.appendChild(script);
   }
 
-  function submitPayload(form, cfg, fields) {
+  function submitPayload(form, cfg, formData) {
+    /* Exactly the §12 payload (backend schema extra:"forbid" — no other
+       top-level keys may ever be added here). */
     var payload = {
-      email: typeof fields.email === "string" ? fields.email.trim() : "",
-      source: cfg.source || window.location.href,
-      session: makeSessionId(),
-      consent: true,
-      form_data: fields
+      source: cfg.source,
+      source_url: pageUrl(),
+      session_id: ensureSessionId(),
+      consent_version: cfg.consentVersion,
+      form_data: formData
     };
 
+    var email = extractEmail(form, formData);
+    if (email) {
+      payload.email = email; /* key omitted entirely when empty */
+    }
+
     var request = function () {
-      fetch(cfg.endpoint, {
+      fetch(cfg.backendUrl.replace(/\/+$/, "") + "/api/v1/signups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -232,7 +367,8 @@
             return;
           }
           if (status === 422) {
-            /* validation rejection: name the fix — never the generic failure text */
+            /* validation rejection: name the fix — never the generic failure
+               text (per-field detail array or string detail both handled) */
             writeStatus(form, describeValidationError(body && body.detail), "is-error", true);
             return;
           }
@@ -246,18 +382,30 @@
           }
           writeStatus(form, MSG_GENERIC, "is-error", true);
         })
-        .catch(function () {
-          writeStatus(form, MSG_UNREACHABLE, "is-error", true);
+        .catch(function (err) {
+          if (err && err.name === "TypeError") {
+            /* fetch rejects with TypeError on network failure — its own wording */
+            writeStatus(form, MSG_UNREACHABLE, "is-error", true);
+          } else {
+            writeStatus(form, MSG_GENERIC, "is-error", true);
+          }
         })
         .then(function () {
           inFlight = false;
         });
     };
 
-    if (cfg.recaptchaSiteKey) {
+    if (cfg.captchaRequired) {
+      if (!cfg.siteKey) {
+        /* malformed live config: no token can ever be obtained — honest
+           verification wording, no loader request, no POST */
+        writeStatus(form, MSG_VERIFICATION, "is-error", true);
+        inFlight = false;
+        return;
+      }
       ensureRecaptcha(cfg, function () {
         window.grecaptcha.enterprise
-          .execute(cfg.recaptchaSiteKey, { action: "signup" })
+          .execute(cfg.siteKey, { action: "signup" })
           .then(function (token) {
             payload.captcha_token = token;
             request();
@@ -275,24 +423,18 @@
     }
   }
 
-  function formElSafe() {
-    return document.querySelector("form[data-signup]");
-  }
-
-  var form = formElSafe();
+  var form = document.querySelector("form[data-signup]");
   if (!form) {
     return;
   }
 
   var inFlight = false;
 
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-
+  function attemptSubmit() {
     /* re-check the gate at submit time: inert unless a live config and a
        status region both exist (2026-10-01 hardening) */
-    var cfg = window.__SHADOW_SIGNUP_CONFIG__;
-    if (!cfg || !cfg.endpoint) {
+    var cfg = readConfig();
+    if (!cfg) {
       return;
     }
     if (!form.querySelector('[role="status"]')) {
@@ -304,6 +446,32 @@
 
     clearStatus(form);
     inFlight = true;
-    submitPayload(form, cfg, readFields(form));
+    submitPayload(form, cfg, collectFormData(form));
+  }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    /* Enter in the email input fires implicit submission (native constraint
+       validation runs first: an empty required field never reaches this). */
+    attemptSubmit();
+  });
+
+  /* The certified submit control is <button type="button"> — its click never
+     fires a native submit event, so the live path also listens for form-level
+     clicks on button-like targets (delegated; type="reset" excluded). */
+  form.addEventListener("click", function (event) {
+    if (!event.target || !event.target.closest) {
+      return;
+    }
+    var button = event.target.closest("button, input[type=\"button\"], input[type=\"submit\"]");
+    if (!button || !form.contains(button)) {
+      return;
+    }
+    if (button.getAttribute("type") === "reset") {
+      return;
+    }
+    event.preventDefault(); /* live pages: no native action — this form posts via fetch */
+    attemptSubmit();
   });
 })();
