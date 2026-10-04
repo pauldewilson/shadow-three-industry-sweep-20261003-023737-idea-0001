@@ -15,6 +15,7 @@
   <title>WentAround — Go-around alerts the moment they happen</title>
   <meta name="description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q4 2026.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -40,13 +41,15 @@
       <div class="hero-visual">
         <div class="map-panel" aria-hidden="true">
           <svg viewBox="0 0 640 440" role="presentation" focusable="false" aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-            <polyline points="600,80 520,140 440,200 360,260 300,310 260,350 240,380" fill="none" stroke="#5E7089" stroke-width="2"/>
-            <polyline points="360,260 330,215 305,160 290,110" fill="none" stroke="#FFB020" stroke-width="2.5"/>
-            <polygon points="360,260 344,252 348,268" fill="#FFB020"/>
-            <rect x="180" y="392" width="280" height="4" fill="#3A4C66"/>
-            <rect x="180" y="404" width="280" height="4" fill="#3A4C66"/>
-            <rect x="180" y="384" width="4" height="28" fill="#3A4C66"/>
-            <rect x="456" y="384" width="4" height="28" fill="#3A4C66"/>
+            <!-- runway: main threshold bar + displaced-threshold echo -->
+            <rect x="392" y="344" width="168" height="12" fill="#5E7089"/>
+            <rect x="408" y="368" width="136" height="10" fill="#3A4C66"/>
+            <!-- glideslope beam, reaching the runway -->
+            <line x1="112" y1="72" x2="410" y2="336" stroke="#5E7089" stroke-width="8" stroke-linecap="round"/>
+            <!-- dashed flight path: descend ON the beam, then break away and climb -->
+            <polyline points="152,108 344,278 518,68" fill="none" stroke="#FFB020" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="18 22"/>
+            <!-- dart aircraft at the top of the climb -->
+            <polygon points="524,60 527.4,82.4 502.4,86.2 501.4,60.8" fill="#FFB020"/>
           </svg>
         </div>
         <div class="alert-card">
