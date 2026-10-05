@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- WentAround favicon source (64x64) — marketing-designer final asset, 2026-10-04.
+       Concept 3 (Hero Scene) reduced to a favicon-legible mark: dark rounded square,
+       grey glideslope beam to the runway bars, gold DASHED path riding the beam then
+       climbing away, dart aircraft at the top of the climb. No text.
+       Reduction choices per the concepts-round stress-test wisdom: bold 4-unit strokes,
+       dash length kept at the concept's 9 units (2.25px at 16px render), gap trimmed
+       11 -> 10 so the pattern phase lands cleanly on this shorter path; dart kept at
+       concept size, straddling the climb end. Runway: main threshold bar #5E7089
+       (meaning-bearing) + displaced-threshold echo #3A4C66 (decorative-only).
+       Palette from the page tokens; static SVG, no scripts, no external refs.
+       Engineer publish-time step: rasterize to multi-size favicon.ico (16/32/48) or PNG. -->
+  <rect x="0" y="0" width="64" height="64" rx="14" fill="#0E1520"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#26344A" stroke-width="1"/>
+  <rect x="30" y="45" width="26" height="3.5" fill="#5E7089"/>
+  <rect x="33" y="51.5" width="20" height="2.5" fill="#3A4C66"/>
+  <line x1="10" y1="12" x2="41" y2="41" stroke="#5E7089" stroke-width="4" stroke-linecap="round"/>
+  <polyline points="14,15.7 34,34.5 52,12" fill="none" stroke="#FFB020" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 10"/>
+  <polygon points="55,8 56.7,19.2 44.2,21.1 43.7,8.4" fill="#FFB020"/>
+</svg>
