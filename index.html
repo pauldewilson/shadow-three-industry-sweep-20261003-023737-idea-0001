@@ -13,7 +13,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
   <title>WentAround — Go-around alerts the moment they happen</title>
-  <meta name="description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q4 2026.">
+  <meta name="description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q1 2027.">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -21,7 +21,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="WentAround">
   <meta property="og:title" content="WentAround — Go-around alerts the moment they happen">
-  <meta property="og:description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q4 2026.">
+  <meta property="og:description" content="Go-around alerts for plane spotters. Free public Telegram and Discord channels for LAX, JFK, LHR, FRA and AMS — Instant alerts $4.99/mo or $39.99/yr. Launching Q1 2027.">
   <meta property="og:url" content="https://wentaround.com/">
   <meta property="og:image" content="https://wentaround.com/og-image.png">
   <meta property="og:image:width" content="512">
@@ -44,7 +44,7 @@
 
     <section class="hero rail-block">
       <div class="hero-copy">
-        <p class="hero-badge">Launching Q4 2026</p>
+        <p class="hero-badge">Launching Q1 2027</p>
         <h1 id="hero-title" class="hero-headline">Catch the <span class="go-nowrap">go-around.</span> <span class="hero-line2">The moment it happens.</span></h1>
         <p class="hero-hook">You watch the map for hours hoping to catch one — WentAround watches every covered airport around the clock and tips you off when an airliner goes around, with a link straight to the aircraft.</p>
         <div class="cta-row">
@@ -116,6 +116,7 @@
           <span class="mock-link">FlightRadar24 <span aria-hidden="true">↗</span></span>
         </p>
       </div>
+      <p class="section-cta"><a class="link-quiet" href="#signup">Notify me at launch <span class="glyph" aria-hidden="true">↓</span></a></p>
     </section>
 
     <section class="features rail-block">
@@ -143,6 +144,7 @@
           <p class="card-body">Alerts cover airliner-class aircraft at major spotting hubs — the traffic you're there for.</p>
         </li>
       </ul>
+      <p class="section-cta"><a class="link-quiet" href="#signup">Notify me at launch <span class="glyph" aria-hidden="true">↓</span></a></p>
     </section>
 
     <section class="airports" id="airports" tabindex="-1">
@@ -157,6 +159,7 @@
           <li class="airport-chip">Amsterdam <span class="chip-code">(AMS)</span></li>
         </ul>
         <p class="airports-note">More airports follow as the service grows.</p>
+        <p class="section-cta"><a class="link-quiet" href="#signup">Notify me at launch <span class="glyph" aria-hidden="true">↓</span></a></p>
       </div>
     </section>
 
@@ -191,7 +194,7 @@
     <section class="signup-band" id="signup" tabindex="-1">
       <div class="rail">
         <h2 class="signup-title">Be on the channels from day one.</h2>
-        <p class="signup-sub">Launching Q4 2026. Leave your details below and we'll email you the moment the first channels go live.</p>
+        <p class="signup-sub">Launching Q1 2027. Leave your details below and we'll email you the moment the first channels go live.</p>
         <form class="signup-form" data-signup>
           <div class="field">
             <label for="email">Your email</label>
@@ -251,57 +254,38 @@
         </div>
         <div class="faq-item">
           <h3 class="faq-q">When do you launch?</h3>
-          <p class="faq-a">Q4 2026. Leave your details above and we'll email you when the first channels go live.</p>
+          <p class="faq-a">Q1 2027. Leave your details above and we'll email you when the first channels go live.</p>
         </div>
       </div>
     </section>
 
   </main>
 
-<!-- Consent banner — shared component, certified strings S1–S5 byte-identical
-     (ui-ux spec consent-banner-spec__20261001-142148.md; final strings from
-     marketing-copy consent-privacy-wording__20261001-142148.md; notice_version
-     2026-10-analytics-v1). Ported 2026-10-05 (launch-ops fix round 3)
-     byte-verbatim from the docuplow deployed reference. Ships hidden;
-     tracking.js unhides it only after
+<!-- Consent banner — r8 compact chip (funnel-fix2__20261016-025618): the
+     certified r7 aside restructured into a one-bottom-slot instrument chip per
+     agent_docs/research/funnel-fix2__20261016-025618/ui-ux/wentaround-r8__20261016-0330.md
+     §1. Every data-* hook, id, tracking.js-tracked class and every consent
+     string is byte-identical to the certified r7 block; only DOM position and
+     CSS changed (the anonymous-count note relocated into the disclosure body —
+     delta D1; the data-use paragraph stays in the DOM, CSS-hidden at all
+     widths — delta D2). Ships hidden; tracking.js unhides it only after
      validating a live enabled window.__SHADOW_TRACKING_CONFIG__ on a non-file:
-     origin. Without that it stays hidden forever: no storage, no requests,
-     fully inert locally. Sticky bottom overlay pinned to the viewport bottom
-     (the 2026-10-02 user directive supersedes the 2026-10-01 normal-flow
-     placement; the page stays scrollable and non-modal). Compact viewports
-     show a small bar whose "Privacy details" disclosure opens as a fullscreen
-     fixed panel (tracking.js adds the .consent-banner--details-open class that
-     hides the bar and makes the background non-focusable, with robust
-     cleanup); the focus-scroll guard keeps "a focused element is never
-     obscured" true under the overlay; desktop keeps the full inline disclosure
-     in a centered, height-capped card. -->
+     origin (kill-switch contract preserved). No backdrop, no dim layer, no
+     modal (C1-B); Allow and Decline both dismiss; no close icon in decision
+     mode. Manager mode (footer "Privacy choices" reopen) keeps the certified
+     current-line + toggle + Close controls. Native details/summary disclosure;
+     tracking.js adds focus choreography, Escape and the fullscreen Close
+     handling on compact viewports; the focus-scroll guard keeps "a focused
+     element is never obscured" true under the chip. -->
 <aside class="consent-banner" data-consent-banner aria-labelledby="consent-banner-title" hidden>
   <div class="consent-banner__inner">
-    <h2 id="consent-banner-title" tabindex="-1">Allow visit analytics?</h2>
-    <p class="consent-banner__body">With your permission, we use a random browser ID for up to 30 days to connect visits and signups on this site. We record campaign tags, the pages you visit and basic browser/device details, and keep detailed records for up to 90 days. You can decline and still sign up, or change your choice anytime.</p>
-
-    <div class="consent-banner__actions">
-      <button type="button" class="consent-btn" data-consent-allow>Allow analytics</button>
-      <button type="button" class="consent-btn" data-consent-decline>Decline analytics</button>
-    </div>
-    <p class="consent-banner__note" data-consent-note>Until you answer, we count each visit anonymously — no cookies, no browser storage, no identifiers, nothing personal.</p>
-
-    <!-- Manager mode only (reopened via footer "Privacy choices" after a
-         choice exists); hidden in the initial decision state. -->
-    <p class="consent-banner__current" data-consent-current hidden></p>
-    <button type="button" class="consent-btn" data-consent-toggle hidden>Turn off analytics</button>
-    <button type="button" class="consent-btn consent-btn--ghost" data-consent-close hidden>Close</button>
-
-    <!-- Native disclosure; tracking.js adds only focus choreography, Escape
-         and the fullscreen Close handling on live pages. Placed last so the
-         tab order is Allow → Decline → Privacy details in decision mode and
-         turn on/off → Close → Privacy details in manager mode (ui-ux §8.3).
-         The Close control at the top of the body is the fullscreen panel's
-         chrome (compact viewports only; hidden on the desktop inline view). -->
-    <details class="consent-details" data-consent-details>
-      <summary class="consent-details__summary"><span>Privacy details</span></summary>
-      <div class="consent-details__body">
-        <button type="button" class="consent-details__close" data-consent-details-close>Close</button>
+    <div class="consent-banner__head">
+      <h2 id="consent-banner-title" tabindex="-1">Allow visit analytics?</h2>
+      <details class="consent-details" data-consent-details>
+        <summary class="consent-details__summary"><span>Privacy details</span></summary>
+        <div class="consent-details__body">
+          <button type="button" class="consent-details__close" data-consent-details-close>Close</button>
+          <p class="consent-banner__note" data-consent-note>Until you answer, we count each visit anonymously — no cookies, no browser storage, no identifiers, nothing personal.</p>
         <p class="consent-details__heading">Who is responsible</p>
         <p>This site is run by Canvas Tech Solutions, which is responsible for the data described here.</p>
 
@@ -357,14 +341,25 @@
 
         <p class="consent-details__heading">Access and deletion</p>
         <p>You can ask what data is connected to your browser ID, or have it deleted, by contacting the site owner (Canvas Tech Solutions). Because a browser ID alone doesn't prove who you are, we use a basic verification step before sharing or deleting anything.</p>
-      </div>
-    </details>
+        </div>
+      </details>
+    </div>
+    <div class="consent-banner__actions">
+      <button type="button" class="consent-btn consent-btn--primary" data-consent-allow>Allow analytics</button>
+      <button type="button" class="consent-btn consent-btn--secondary" data-consent-decline>Decline analytics</button>
+    </div>
+    <p class="consent-banner__body">With your permission, we use a random browser ID for up to 30 days to connect visits and signups on this site. We record campaign tags, the pages you visit and basic browser/device details, and keep detailed records for up to 90 days. You can decline and still sign up, or change your choice anytime.</p>
+    <p class="consent-banner__current" data-consent-current hidden></p>
+    <div class="consent-banner__manage">
+      <button type="button" class="consent-btn consent-btn--secondary" data-consent-toggle hidden>Turn off analytics</button>
+      <button type="button" class="consent-btn consent-btn--ghost" data-consent-close hidden>Close</button>
+    </div>
   </div>
 </aside>
 
   <footer class="site-footer">
     <div class="rail">
-      <p class="footer-line">WentAround · Launching Q4 2026 · Go-around alerts for the spotting community. FlightRadar24 and ADS-B Exchange are products of their respective owners; WentAround is independent and not affiliated with either.</p>
+      <p class="footer-line">WentAround · Launching Q1 2027 · Go-around alerts for the spotting community. FlightRadar24 and ADS-B Exchange are products of their respective owners; WentAround is independent and not affiliated with either.</p>
       <!-- Persistent post-decision privacy control: hidden until a choice exists
            and while the banner/manager surface is open (tracking.js toggles it);
            on the inert local page it never appears. -->
@@ -377,6 +372,10 @@
       <p class="sr-only" role="status" data-consent-status></p>
     </div>
   </footer>
+
+  <div class="sticky-cta">
+    <a class="btn btn-outline" href="#signup">Notify me at launch <span class="glyph" aria-hidden="true">↓</span></a>
+  </div>
 
   <script src="signup-config.js" defer></script>
   <script src="signup.js" defer></script>
